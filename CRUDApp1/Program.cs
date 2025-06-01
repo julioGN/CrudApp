@@ -11,7 +11,7 @@ builder.Services.AddSwaggerGen();
 builder.Services.AddControllers();
 builder.Services.AddDbContext<ApplicationDbContext>(options =>
 {
-    options.UseSqlServer("Server=localhost,1433;Database=Sample;User ID=sa;Password=StandardE80!;TrustServerCertificate=True;");
+    options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection"));
 });
 var app = builder.Build();
 
@@ -28,7 +28,4 @@ app.UseAuthorization();
 
 app.MapControllers();
 
-
-
 app.Run();
-
