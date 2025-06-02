@@ -1,0 +1,104 @@
+﻿@page "/Clients/Create"
+@using BlazorApp.Models
+@using System.Text.Json.Nodes
+
+<div class="row">
+    <div class="col-lg-8">
+        <h1 class="mb-5">New Client</h1>
+
+        <div class="row mb-3">
+            <label class="col-md-4 col-form-label">First name</label>
+            <div class="col-md-8">
+                <input class="form-control" @bind="clientData.FirstName">
+                <span class="text-danger">@Errors["FirstName"]?[0]</span>
+            </div>
+        </div>
+
+        <div class="row mb-3">
+            <label class="col-md-4 col-form-label">Last name</label>
+            <div class="col-md-8">
+                <input class="form-control" @bind="clientData.LastName">
+                <span class="text-danger">@Errors["LastName"]?[0]</span>
+            </div>
+        </div>
+
+        <div class="row mb-3">
+            <label class="col-md-4 col-form-label">Email</label>
+            <div class="col-md-8">
+                <input class="form-control" @bind="clientData.Email">
+                <span class="text-danger">@Errors["Email"]?[0]</span>
+            </div>
+        </div>
+
+        <div class="row mb-3">
+            <label class="col-md-4 col-form-label">Phone number</label>
+            <div class="col-md-8">
+                <input class="form-control" @bind="clientData.PhoneNumber">
+                <span class="text-danger">@Errors["PhoneNumber"]?[0]</span>
+            </div>
+        </div>
+
+        <div class="row mb-3">
+            <label class="col-md-4 col-form-label">Address</label>
+            <div class="col-md-8">
+                <input class="form-control" @bind="clientData.Address">
+                <span class="text-danger">@Errors["Address"]?[0]</span>
+            </div>
+        </div>
+
+        <div class="row mb-3">
+            <label class="col-md-4 col-form-label">Status</label>
+            <div class="col-md-8">
+                <select class="form-select" @bind="clientData.Status">
+                    <option value="New">New</option>
+                    <option value="Permanent">Permanent</option>
+                    <option value="Lead">Lead</option>
+                    <option value="Seasonal">Seasonal</option>
+                    <option value="Inactive">Inactive</option>
+                </select>
+                <span class="text-danger">@Errors["Status"]?[0]</span>
+            </div>
+        </div>
+
+        <div class="row">
+            <div class="offset-md-4 col-md-4 d-grid">
+                <button class="btn btn-primary" @onclick="SaveClient">Submit</button>
+            </div>
+            <div class="col-md-4 d-grid">
+                <a class="btn btn-outline-primary" href="/Clients">Cancel</a>
+            </div>
+        </div>
+    </div>
+</div>
+
+@inject HttpClient http
+@inject NavigationManager navManager
+@code {
+    public ClientDto clientData { get; set; } = new();
+    public JsonNode Errors { get; set; } = new JsonObject();
+
+    protected async Task SaveClient()
+    {
+        HttpResponseMessage? response = await http.PostAsJsonAsync("http://localhost:4000/api/Clients", clientData);
+
+        if (response.IsSuccessStatusCode)
+        {
+            navManager.NavigateTo("/Clients");
+        }
+        else
+        {
+            String? strResponse = await response.Content.ReadAsStringAsync();
+            Console.WriteLine("JSON Response: \n" + strResponse);
+
+            try
+            {
+                JsonNode? jsonResponse = JsonNode.Parse(strResponse);
+                Errors = jsonResponse?["errors"] ?? new JsonObject();
+            }
+            catch (Exception ex)
+            {
+
+            }
+        }
+    }
+}

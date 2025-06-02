@@ -1,0 +1,34 @@
+﻿@page "/Clients/Delete/{Id:int}"
+@using BlazorApp.Models
+
+<h1 class="mb-3">Delete Client</h1>
+
+@if (client is null)
+{
+    <p>Loading...</p>
+}
+else
+{
+    <p>Are you sure you want to delete client <strong>@($"{client.FirstName} {client.LastName}")</strong>?</p>
+    <button class="btn btn-danger" @onclick="DeleteClient">Delete</button>
+    <a class="btn btn-secondary" href="/Clients">Cancel</a>
+}
+
+@inject HttpClient http
+@inject NavigationManager navManager
+
+@code {
+    [Parameter] public int Id { get; set; }
+    private Client? client;
+
+    protected override async Task OnParametersSetAsync()
+    {
+        client = await http.GetFromJsonAsync<Client>($"http://localhost:4000/api/Clients/{Id}");
+    }
+
+    private async Task DeleteClient()
+    {
+        var response = await http.DeleteAsync($"http://localhost:4000/api/Clients/{Id}");
+        navManager.NavigateTo("/Clients");
+    }
+}

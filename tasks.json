@@ -1,0 +1,25 @@
+{
+  "version": "2.0.0",
+  "tasks": [
+    {
+      "label": "build",
+      "command": "dotnet",
+      "type": "process",
+      "args": [
+        "build",
+        "${workspaceFolder}/CrudApp.sln"
+      ],
+      "problemMatcher": "$msCompile"
+    },
+    {
+      "label": "open-brave",
+      "type": "shell",
+      "command": "open",
+      "args": [
+        "-a",
+        "Brave Browser",
+        "https://localhost:5216"  // <-- change to your actual URL if different
+      ]
+    }
+  ]
+}
